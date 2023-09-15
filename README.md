@@ -2,19 +2,12 @@
 
 ## Introduction
 
-TODO Describe what your plugin does here
-
+This plugin will turn any project and/or your Jenkins instance itself as a remote server for storage of [Apache Maven build cache extension](https://maven.apache.org/extensions/maven-build-cache-extension/remote-cache.html
+) 
 ## Getting started
 
-TODO Tell users how to configure your plugin here, include screenshots, pipeline examples and 
-configuration-as-code examples.
+Just install the plugin :). Any job will host a cache server with url $joburl/maven-cache or $jenkinsurl/plugin/maven-cache
 
-## Issues
-
-TODO Decide where you're going to host your issues, the default is Jenkins JIRA, but you can also enable GitHub issues,
-If you use GitHub issues there's no need for this section; else add the following line:
-
-Report issues and enhancements in the [Jenkins issue tracker](https://issues.jenkins.io/).
 
 ## Contributing
 
