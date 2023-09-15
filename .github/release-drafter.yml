@@ -1,0 +1,2 @@
+_extends: .github
+tag-template: maven-cache-$NEXT_MINOR_VERSION
