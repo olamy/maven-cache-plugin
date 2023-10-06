@@ -11,7 +11,7 @@
   <artifactId>maven-cache</artifactId>
   <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
-  <name>TODO Plugin</name>
+  <name>Apache Maven Build Cache Server for Jenkins</name>
   <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
   <licenses>
     <license>

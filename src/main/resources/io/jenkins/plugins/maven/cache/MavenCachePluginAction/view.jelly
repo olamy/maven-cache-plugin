@@ -1,0 +1,16 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
+         xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <l:layout title="Maven Cache">
+        <l:side-panel/>
+        <l:main-panel>
+            <h2>Maven Cache content</h2>
+            <p>${it.cacheEntries.size()}</p>
+            <ul>
+                <j:forEach var="entry" items="${it.cacheEntries}" varStatus="loop" indexVar="index">
+                    <li><a href="${entry.href}">${entry.path}</a>${baseUrl}</li>
+                </j:forEach>
+            </ul>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

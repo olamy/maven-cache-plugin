@@ -3,22 +3,22 @@ package io.jenkins.plugins.maven.cache;
 import com.google.inject.Inject;
 import hudson.Extension;
 import hudson.model.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import javax.servlet.ServletException;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-
 @Extension
 public class TransientBuildActionFactoryImpl extends TransientProjectActionFactory {
     @Inject
-    MavenCachePlugin plugin;
+    MavenCachePluginAction plugin;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MavenCachePlugin.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MavenCachePluginAction.class);
 
     @Override
     public Collection<? extends Action> createFor(AbstractProject target) {
@@ -33,19 +33,19 @@ public class TransientBuildActionFactoryImpl extends TransientProjectActionFacto
         }
 
         public String getIconFileName() {
-            return plugin.getIconFileName();
+            return "";
         }
 
         public String getDisplayName() {
-            return "Maven Build Cache Manager";
+            return "Maven Build Cache";
         }
 
         public String getUrlName() {
-            return "maven-cache";
+            return "maven-cache-old";
         }
 
         public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-            plugin.handleCacheRequest(this.project.getRootDir(), req, rsp);
+            plugin.handleCacheRequest(new File(this.project.getRootDir(), "maven-cache"), req, rsp);
         }
     }
 }
