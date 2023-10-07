@@ -51,6 +51,8 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
 
     private AbstractProject project;
 
+    private List<String> pathParts;
+
     public MavenCachePluginAction() {
         //
     }
@@ -68,12 +70,13 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
         }
 
         String path = StringUtils.substringAfter(req.getPathInfo(), project.getName() + "/" + getUrlName() + "/");
+        this.pathParts = path == null || path.isEmpty() ? Collections.emptyList() : Arrays.asList(path.split("/"));
         File cacheContentSearchRoot = new File(cacheRootDir, path);
-        File[] files = cacheContentSearchRoot.listFiles((dir, name) -> path.isEmpty() || dir.getName().startsWith(path)
-                || StringUtils.endsWith(path, name) || dir.getPath().endsWith(path));
+        File[] files = cacheContentSearchRoot.listFiles();
         if (files != null) {
             this.cacheEntries = Arrays.stream(files)
-                    .map(file -> new CacheEntry(file.isDirectory(), shortenedPath(cacheContentSearchRoot, file.getPath()), calculateHref(file, cacheRootDir, req.getPathInfo())))
+                    .map(file -> new CacheEntry(file.isDirectory(), shortenedPath(cacheContentSearchRoot,
+                            file.getPath()), calculateHref(file, cacheRootDir)))
                     .collect(Collectors.toList());
         } else {
             this.cacheEntries = Collections.emptyList();
@@ -82,17 +85,21 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
         req.getView(this,"view.jelly").forward(req, rsp);
     }
 
-    private String calculateHref(File file, File cacheRootDir, String pathInfo) {
-        // StringUtils.removeEnd(pathInfo, "/")
-        //                +
-        //return  StringUtils.removeStart(StringUtils.substringAfter(file.getPath(), cacheRootDir.getPath()), "/");
-        return Jenkins.get().getRootUrl() + project.getUrl() + "maven-cache" + StringUtils.substringAfter(file.getPath(), cacheRootDir.getPath());
+    public String getBaseUrl() {
+        return Jenkins.get().getRootUrl() + project.getUrl() + "maven-cache/";
+    }
+
+    private String calculateHref(File file, File cacheRootDir) {
+        return getBaseUrl() + StringUtils.removeStart(StringUtils.substringAfter(file.getPath(), cacheRootDir.getPath()), "/");
     }
 
     private String shortenedPath(File cacheRootDir, String filePath) {
         return StringUtils.removeStart(StringUtils.substringAfter(filePath, cacheRootDir.getPath()), "/");
     }
 
+    public List<String> getPathParts() {
+        return pathParts;
+    }
 
     public List<CacheEntry> getCacheEntries() {
         return cacheEntries;

@@ -5,7 +5,18 @@
         <l:side-panel/>
         <l:main-panel>
             <h2>Maven Cache content</h2>
-            <p>${it.cacheEntries.size()}</p>
+            <p>
+                <j:set var="accumulatedPath" value=""/>
+                <j:forEach var="pathPart" items="${it.pathParts}" varStatus="loop" indexVar="index">
+                    <j:if test="${index == 0}">
+                        <j:set var="accumulatedPath" value="${pathPart}"/>
+                    </j:if>
+                    <j:if test="${index > 0}">
+                        <j:set var="accumulatedPath" value="${accumulatedPath + '/' + pathPart}"/>
+                    </j:if>
+                    / <a href="${it.baseUrl}${accumulatedPath}">${pathPart}</a>
+                </j:forEach>
+            </p>
             <ul>
                 <j:forEach var="entry" items="${it.cacheEntries}" varStatus="loop" indexVar="index">
                     <li><a href="${entry.href}">${entry.path}</a>${baseUrl}</li>
