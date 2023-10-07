@@ -1,0 +1,10 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+    <link rel="stylesheet" type="text/css" href="${rootURL}/plugin/maven-cache/css/prism.css" />
+    <script language="javascript" type="text/javascript" src="${rootURL}/plugin/maven-cache/js/clipboard.min.js"></script>
+    <script language="javascript" type="text/javascript" src="${rootURL}/plugin/maven-cache/js/prism.js"></script>
+    <script language="javascript" type="text/javascript" src="${rootURL}/plugin/maven-cache/js/maven-cache.js"></script>
+    <script language="javascript" type="text/javascript" src="${rootURL}/plugin/maven-cache/js/bliss.shy.min.js"></script>
+    <script language="javascript" type="text/javascript" src="${rootURL}/plugin/maven-cache/js/prism-live.js"></script>
+    <script language="javascript" type="text/javascript" src="${rootURL}/plugin/maven-cache/js/prism-live-javascript.js"></script>
+</j:jelly>

@@ -53,6 +53,10 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
 
     private List<String> pathParts;
 
+    private String fileContent;
+
+    private boolean fileFound;
+
     public MavenCachePluginAction() {
         //
     }
@@ -72,15 +76,22 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
         String path = StringUtils.substringAfter(req.getPathInfo(), project.getName() + "/" + getUrlName() + "/");
         this.pathParts = path == null || path.isEmpty() ? Collections.emptyList() : Arrays.asList(path.split("/"));
         File cacheContentSearchRoot = new File(cacheRootDir, path);
-        File[] files = cacheContentSearchRoot.listFiles();
-        if (files != null) {
-            this.cacheEntries = Arrays.stream(files)
-                    .map(file -> new CacheEntry(file.isDirectory(), shortenedPath(cacheContentSearchRoot,
-                            file.getPath()), calculateHref(file, cacheRootDir)))
-                    .collect(Collectors.toList());
-        } else {
+        if (cacheContentSearchRoot.isFile()) {
+            fileFound = true;
+            fileContent = Files.readString(cacheContentSearchRoot.toPath());
             this.cacheEntries = Collections.emptyList();
+        } else {
+            File[] files = cacheContentSearchRoot.listFiles();
+            if (files != null) {
+                this.cacheEntries = Arrays.stream(files)
+                        .map(file -> new CacheEntry(file.isDirectory(), shortenedPath(cacheContentSearchRoot,
+                                file.getPath()), calculateHref(file, cacheRootDir)))
+                        .collect(Collectors.toList());
+            } else {
+                this.cacheEntries = Collections.emptyList();
+            }
         }
+
 
         req.getView(this,"view.jelly").forward(req, rsp);
     }
@@ -95,6 +106,14 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
 
     private String shortenedPath(File cacheRootDir, String filePath) {
         return StringUtils.removeStart(StringUtils.substringAfter(filePath, cacheRootDir.getPath()), "/");
+    }
+
+    public String getFileContent() {
+        return fileContent;
+    }
+
+    public boolean isFileFound() {
+        return fileFound;
     }
 
     public List<String> getPathParts() {

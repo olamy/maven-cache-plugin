@@ -46,6 +46,14 @@
     </dependencies>
   </dependencyManagement>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.jenkins-ci.ui</groupId>
+      <artifactId>jquery-detached</artifactId>
+      <version>1.2.1</version>
+    </dependency>
+  </dependencies>
+
   <repositories>
     <repository>
       <id>repo.jenkins-ci.org</id>
