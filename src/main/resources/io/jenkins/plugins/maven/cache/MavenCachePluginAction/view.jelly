@@ -2,37 +2,41 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
          xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
          xmlns:m="/io/jenkins/plugins/maven/cache/tags">
-    <l:layout title="Maven Cache">
-        <m:import/>
-        <l:side-panel/>
-        <l:main-panel>
-            <h2>Maven Cache content</h2>
-            <p>
-                <j:set var="accumulatedPath" value=""/>
-                <j:forEach var="pathPart" items="${it.pathParts}" varStatus="loop" indexVar="index">
-                    <j:if test="${index == 0}">
-                        <j:set var="accumulatedPath" value="${pathPart}"/>
-                    </j:if>
-                    <j:if test="${index > 0}">
-                        <j:set var="accumulatedPath" value="${accumulatedPath + '/' + pathPart}"/>
-                    </j:if>
-                    / <a href="${it.baseUrl}${accumulatedPath}">${pathPart}</a>
-                </j:forEach>
-            </p>
-            <div>
-            <ul>
-                <j:forEach var="entry" items="${it.cacheEntries}" varStatus="loop" indexVar="index">
-                    <li><a href="${entry.href}">${entry.path}</a>${baseUrl}</li>
-                </j:forEach>
-            </ul>
-            </div>
-            <div>
-                <j:if test="${it.fileFound}">
-                    <pre class="line-numbers">
-                        <textarea readonly="true" class="prism-live language-js" style="--min-height: 350px;display: none" id="file-content">${it.fileContent}</textarea>
-                    </pre>
-                </j:if>
-            </div>
-        </l:main-panel>
-    </l:layout>
+  <l:layout title="${%Maven Cache}">
+    <m:import/>
+    <l:side-panel/>
+    <l:main-panel>
+      <h2>${%Maven Cache content}</h2>
+      <p>
+        <j:set var="accumulatedPath" value=""/>
+        <j:forEach var="pathPart" items="${it.pathParts}" varStatus="loop" indexVar="index">
+          <j:if test="${index == 0}">
+            <j:set var="accumulatedPath" value="${pathPart}"/>
+          </j:if>
+          <j:if test="${index > 0}">
+            <j:set var="accumulatedPath" value="${accumulatedPath + '/' + pathPart}"/>
+          </j:if>
+          /
+          <a href="${it.baseUrl}${accumulatedPath}">${pathPart}</a>
+        </j:forEach>
+      </p>
+      <div>
+        <ul>
+          <j:forEach var="entry" items="${it.cacheEntries}" varStatus="loop" indexVar="index">
+            <li><a href="${entry.href}">${entry.path}</a>${baseUrl}
+            </li>
+          </j:forEach>
+        </ul>
+      </div>
+      <div>
+        <j:if test="${it.fileFound}">
+          <pre class="line-numbers">
+            <textarea readonly="true" class="prism-live language-js" style="--min-height: 350px;display: none"
+                      id="file-content">${it.fileContent}
+            </textarea>
+          </pre>
+        </j:if>
+      </div>
+    </l:main-panel>
+  </l:layout>
 </j:jelly>

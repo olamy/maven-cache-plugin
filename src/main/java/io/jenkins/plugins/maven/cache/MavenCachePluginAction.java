@@ -2,21 +2,23 @@ package io.jenkins.plugins.maven.cache;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
-import hudson.model.*;
-
+import hudson.model.AbstractProject;
+import hudson.model.Action;
+import hudson.model.Describable;
+import hudson.model.Descriptor;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.rowset.spi.SyncResolver;
-
 import jenkins.model.Jenkins;
 import jenkins.model.TransientActionFactory;
 import org.apache.commons.io.IOUtils;
@@ -26,8 +28,7 @@ import org.kohsuke.stapler.StaplerResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MavenCachePluginAction implements Action, Describable<MavenCachePluginAction> { // extends Plugin
-
+public class MavenCachePluginAction implements Action, Describable<MavenCachePluginAction> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenCachePluginAction.class);
 
     private List<CacheEntry> cacheEntries;
@@ -46,8 +47,6 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
     public String getUrlName() {
         return "maven-cache";
     }
-
-    public static final String JELLY_RESOURCES_PATH = "/io/jenkins/plugins/maven/cache/MavenCachePluginAction/";
 
     private AbstractProject project;
 
@@ -84,16 +83,17 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
             File[] files = cacheContentSearchRoot.listFiles();
             if (files != null) {
                 this.cacheEntries = Arrays.stream(files)
-                        .map(file -> new CacheEntry(file.isDirectory(), shortenedPath(cacheContentSearchRoot,
-                                file.getPath()), calculateHref(file, cacheRootDir)))
+                        .map(file -> new CacheEntry(
+                                file.isDirectory(),
+                                shortenedPath(cacheContentSearchRoot, file.getPath()),
+                                calculateHref(file, cacheRootDir)))
                         .collect(Collectors.toList());
             } else {
                 this.cacheEntries = Collections.emptyList();
             }
         }
 
-
-        req.getView(this,"view.jelly").forward(req, rsp);
+        req.getView(this, "view.jelly").forward(req, rsp);
     }
 
     public String getBaseUrl() {
@@ -101,7 +101,8 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
     }
 
     private String calculateHref(File file, File cacheRootDir) {
-        return getBaseUrl() + StringUtils.removeStart(StringUtils.substringAfter(file.getPath(), cacheRootDir.getPath()), "/");
+        return getBaseUrl()
+                + StringUtils.removeStart(StringUtils.substringAfter(file.getPath(), cacheRootDir.getPath()), "/");
     }
 
     private String shortenedPath(File cacheRootDir, String filePath) {
@@ -202,7 +203,11 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
         @NonNull
         @Override
         public Collection<MavenCachePluginAction> createFor(AbstractProject p) {
-            return Collections.singletonList(new MavenCachePluginAction(p));
+            MavenCacheProjectProperty projectProperty =
+                    (MavenCacheProjectProperty) p.getProperty(MavenCacheProjectProperty.class);
+            return (projectProperty != null && projectProperty.isEnable())
+                    ? Collections.singletonList(new MavenCachePluginAction(p))
+                    : Collections.emptyList();
         }
 
         @Override
@@ -214,6 +219,6 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
     @Extension
     public static final class ToDeclarativeActionDescriptor extends Descriptor<MavenCachePluginAction> {
         // no op
-    }
 
+    }
 }
