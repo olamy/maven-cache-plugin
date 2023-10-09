@@ -1,11 +1,12 @@
 package io.jenkins.plugins.maven.cache;
 
+import static hudson.Functions.checkPermission;
+
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
-import hudson.model.AbstractProject;
-import hudson.model.Action;
-import hudson.model.Describable;
-import hudson.model.Descriptor;
+import hudson.model.*;
+import hudson.security.Permission;
+import hudson.security.PermissionScope;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,6 +33,20 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenCachePluginAction.class);
 
     private List<CacheEntry> cacheEntries;
+
+    public static final Permission MAVEN_CACHE_WRITE = new Permission(
+            Item.PERMISSIONS,
+            "MavenCacheWrite",
+            Messages._permission_write_description(),
+            Permission.WRITE,
+            PermissionScope.JENKINS);
+
+    public static final Permission MAVEN_CACHE_READ = new Permission(
+            Item.PERMISSIONS,
+            "MavenCacheRead",
+            Messages._permission_read_description(),
+            MAVEN_CACHE_WRITE,
+            PermissionScope.JENKINS);
 
     @Override
     public String getIconFileName() {
@@ -65,6 +80,7 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
     }
 
     public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
+        checkPermission(this.project, MAVEN_CACHE_READ);
         File cacheRootDir = new File(this.project.getRootDir(), "maven-cache");
         LOGGER.debug("doDynamic");
         if (req.getPathInfo().contains(this.project.getName() + "/" + getUrlName() + "/repository/")) {
@@ -181,6 +197,7 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
                 IOUtils.copy(Files.newInputStream(destFile.toPath()), rsp.getOutputStream());
                 return;
             case "PUT":
+                checkPermission(this.project, MAVEN_CACHE_WRITE);
                 // create tmp file to store content then atomic move
                 Path tmp = Files.createTempFile("maven", "cache");
                 IOUtils.copy(req.getInputStream(), Files.newOutputStream(tmp));
