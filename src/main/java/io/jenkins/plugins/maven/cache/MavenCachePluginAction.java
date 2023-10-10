@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package io.jenkins.plugins.maven.cache;
 
 import static hudson.Functions.checkPermission;
@@ -12,10 +30,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +47,7 @@ import org.slf4j.LoggerFactory;
 public class MavenCachePluginAction implements Action, Describable<MavenCachePluginAction> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenCachePluginAction.class);
 
-    private List<CacheEntry> cacheEntries;
+    private List<CacheEntry> cacheEntries = new ArrayList<>();
 
     public static final Permission MAVEN_CACHE_WRITE = new Permission(
             Item.PERMISSIONS,
@@ -90,25 +105,23 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
 
         String path = StringUtils.substringAfter(req.getPathInfo(), project.getName() + "/" + getUrlName() + "/");
         this.pathParts = path == null || path.isEmpty() ? Collections.emptyList() : Arrays.asList(path.split("/"));
-        File cacheContentSearchRoot = new File(cacheRootDir, path);
-        if (cacheContentSearchRoot.isFile()) {
-            fileFound = true;
-            fileContent = Files.readString(cacheContentSearchRoot.toPath());
-            this.cacheEntries = Collections.emptyList();
-        } else {
-            File[] files = cacheContentSearchRoot.listFiles();
-            if (files != null) {
-                this.cacheEntries = Arrays.stream(files)
-                        .map(file -> new CacheEntry(
-                                file.isDirectory(),
-                                shortenedPath(cacheContentSearchRoot, file.getPath()),
-                                calculateHref(file, cacheRootDir)))
-                        .collect(Collectors.toList());
+        if (path != null) {
+            File cacheContentSearchRoot = new File(cacheRootDir, path);
+            if (cacheContentSearchRoot.isFile()) {
+                fileFound = true;
+                fileContent = Files.readString(cacheContentSearchRoot.toPath());
             } else {
-                this.cacheEntries = Collections.emptyList();
+                File[] files = cacheContentSearchRoot.listFiles();
+                if (files != null) {
+                    this.cacheEntries = Arrays.stream(files)
+                            .map(file -> new CacheEntry(
+                                    file.isDirectory(),
+                                    shortenedPath(cacheContentSearchRoot, file.getPath()),
+                                    calculateHref(file, cacheRootDir)))
+                            .collect(Collectors.toList());
+                }
             }
         }
-
         req.getView(this, "view.jelly").forward(req, rsp);
     }
 

@@ -2,11 +2,11 @@
 
 ## Introduction
 
-This plugin will turn any project and/or your Jenkins instance itself as a remote server for storage of [Apache Maven build cache extension](https://maven.apache.org/extensions/maven-build-cache-extension/remote-cache.html
+This plugin will turn any project as a remote server for storage of [Apache Maven build cache extension](https://maven.apache.org/extensions/maven-build-cache-extension/remote-cache.html
 ) 
 ## Getting started
 
-Just install the plugin :). Any job will host a cache server with url $joburl/maven-cache or $jenkinsurl/plugin/maven-cache
+Just install the plugin and enable the cache at a project level and the job will host a cache server with url $joburl/maven-cache/repository
 
 
 ## Contributing
@@ -17,5 +17,5 @@ Refer to our [contribution guidelines](https://github.com/jenkinsci/.github/blob
 
 ## LICENSE
 
-Licensed under MIT, see [LICENSE](LICENSE.md)
+Licensed under Apache License, see [LICENSE](LICENSE.md)
 

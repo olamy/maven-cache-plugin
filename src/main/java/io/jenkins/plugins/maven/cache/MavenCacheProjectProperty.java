@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package io.jenkins.plugins.maven.cache;
 
 import hudson.Extension;
@@ -11,15 +29,9 @@ public class MavenCacheProjectProperty extends JobProperty<Job<?, ?>> {
 
     private boolean enable;
 
-    private String cronSpec;
-
-    private int expirationDays = 7;
-
     @DataBoundConstructor
-    public MavenCacheProjectProperty(boolean enable, String cronSpec, int expirationDays) {
+    public MavenCacheProjectProperty(boolean enable) {
         this.enable = enable;
-        this.cronSpec = cronSpec;
-        this.expirationDays = expirationDays;
     }
 
     public boolean isEnable() {
@@ -28,22 +40,6 @@ public class MavenCacheProjectProperty extends JobProperty<Job<?, ?>> {
 
     public void setEnable(boolean enable) {
         this.enable = enable;
-    }
-
-    public String getCronSpec() {
-        return cronSpec;
-    }
-
-    public void setCronSpec(String cronSpec) {
-        this.cronSpec = cronSpec;
-    }
-
-    public int getExpirationDays() {
-        return expirationDays;
-    }
-
-    public void setExpirationDays(int expirationDays) {
-        this.expirationDays = expirationDays;
     }
 
     public String getCacheUrl() {
