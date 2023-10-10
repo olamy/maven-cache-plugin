@@ -53,15 +53,15 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
             Item.PERMISSIONS,
             "MavenCacheWrite",
             Messages._permission_write_description(),
-            Permission.WRITE,
-            PermissionScope.JENKINS);
+            null,
+            PermissionScope.ITEM_GROUP);
 
     public static final Permission MAVEN_CACHE_READ = new Permission(
             Item.PERMISSIONS,
             "MavenCacheRead",
             Messages._permission_read_description(),
-            MAVEN_CACHE_WRITE,
-            PermissionScope.JENKINS);
+            null,
+            PermissionScope.ITEM_GROUP);
 
     @Override
     public String getIconFileName() {
@@ -78,7 +78,7 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
         return "maven-cache";
     }
 
-    private AbstractProject project;
+    private Job job;
 
     private List<String> pathParts;
 
@@ -90,20 +90,20 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
         //
     }
 
-    public MavenCachePluginAction(AbstractProject project) {
-        this.project = project;
+    public MavenCachePluginAction(Job job) {
+        this.job = job;
     }
 
     public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
-        checkPermission(this.project, MAVEN_CACHE_READ);
-        File cacheRootDir = new File(this.project.getRootDir(), "maven-cache");
+        checkPermission(this.job, MAVEN_CACHE_READ);
+        File cacheRootDir = new File(this.job.getRootDir(), "maven-cache");
         LOGGER.debug("doDynamic");
-        if (req.getPathInfo().contains(this.project.getName() + "/" + getUrlName() + "/repository/")) {
+        if (req.getPathInfo().contains(this.job.getName() + "/" + getUrlName() + "/repository/")) {
             handleCacheRequest(cacheRootDir, req, rsp);
             return;
         }
 
-        String path = StringUtils.substringAfter(req.getPathInfo(), project.getName() + "/" + getUrlName() + "/");
+        String path = StringUtils.substringAfter(req.getPathInfo(), job.getName() + "/" + getUrlName() + "/");
         this.pathParts = path == null || path.isEmpty() ? Collections.emptyList() : Arrays.asList(path.split("/"));
         if (path != null) {
             File cacheContentSearchRoot = new File(cacheRootDir, path);
@@ -126,7 +126,7 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
     }
 
     public String getBaseUrl() {
-        return Jenkins.get().getRootUrl() + project.getUrl() + "maven-cache/";
+        return Jenkins.get().getRootUrl() + job.getUrl() + "maven-cache/";
     }
 
     private String calculateHref(File file, File cacheRootDir) {
@@ -210,7 +210,7 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
                 IOUtils.copy(Files.newInputStream(destFile.toPath()), rsp.getOutputStream());
                 return;
             case "PUT":
-                checkPermission(this.project, MAVEN_CACHE_WRITE);
+                checkPermission(this.job, MAVEN_CACHE_WRITE);
                 // create tmp file to store content then atomic move
                 Path tmp = Files.createTempFile("maven", "cache");
                 IOUtils.copy(req.getInputStream(), Files.newOutputStream(tmp));
@@ -229,10 +229,10 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
     }
 
     @Extension
-    public static class ActionInjector extends TransientActionFactory<AbstractProject> {
+    public static class ActionInjector extends TransientActionFactory<Job> {
         @NonNull
         @Override
-        public Collection<MavenCachePluginAction> createFor(AbstractProject p) {
+        public Collection<MavenCachePluginAction> createFor(Job p) {
             MavenCacheProjectProperty projectProperty =
                     (MavenCacheProjectProperty) p.getProperty(MavenCacheProjectProperty.class);
             return (projectProperty != null && projectProperty.isEnable())
@@ -242,7 +242,7 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
 
         @Override
         public Class type() {
-            return AbstractProject.class;
+            return Job.class;
         }
     }
 

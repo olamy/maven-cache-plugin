@@ -22,6 +22,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.model.Item;
+import hudson.model.Job;
 import hudson.model.PersistentDescriptor;
 import hudson.triggers.Trigger;
 import hudson.triggers.TriggerDescriptor;
@@ -127,12 +128,10 @@ public class MavenCacheCleanerTrigger extends Trigger<AbstractProject<?, ?>> {
 
         @Override
         public boolean isApplicable(Item item) {
-            if (item instanceof AbstractProject) {
-                MavenCacheProjectProperty projectProperty = (MavenCacheProjectProperty)
-                        ((AbstractProject) item).getProperty(MavenCacheProjectProperty.class);
-                if (projectProperty != null && projectProperty.isEnable()) {
-                    return true;
-                }
+            if (item instanceof Job) {
+                MavenCacheProjectProperty projectProperty =
+                        (MavenCacheProjectProperty) ((Job) item).getProperty(MavenCacheProjectProperty.class);
+                return projectProperty != null && projectProperty.isEnable();
             }
             return false;
         }
