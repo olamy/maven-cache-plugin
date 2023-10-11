@@ -19,6 +19,7 @@
 package io.jenkins.plugins.maven.cache;
 
 import static hudson.Functions.checkPermission;
+import static hudson.Functions.getIconFilePath;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
@@ -65,7 +66,7 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
 
     @Override
     public String getIconFileName() {
-        return "foo.png";
+        return "plugin/maven-cache/images/maven-feather.png";
     }
 
     @Override
