@@ -50,18 +50,18 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
     private List<CacheEntry> cacheEntries = new ArrayList<>();
 
     public static final Permission MAVEN_CACHE_WRITE = new Permission(
-            Item.PERMISSIONS,
+            Job.PERMISSIONS,
             "MavenCacheWrite",
             Messages._permission_write_description(),
-            null,
-            PermissionScope.ITEM_GROUP);
+            Item.CREATE,
+            PermissionScope.ITEM);
 
     public static final Permission MAVEN_CACHE_READ = new Permission(
-            Item.PERMISSIONS,
+            Job.PERMISSIONS,
             "MavenCacheRead",
             Messages._permission_read_description(),
-            null,
-            PermissionScope.ITEM_GROUP);
+            Item.READ,
+            PermissionScope.ITEM);
 
     @Override
     public String getIconFileName() {

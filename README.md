@@ -16,7 +16,7 @@ Then you will be able to use this as a [remote cache server](https://maven.apach
 ```
 Or CLI
 ```shell
--Dmaven.build.cache.remote.url=https://your-jenkins-host/$job/maven-cache/repository -Dmaven.build.cache.remote.enabled=true -Dmaven.build.cache.remote.save.enabled=true
+-Dmaven.build.cache.remote.url=https://your-jenkins-host/$job/maven-cache/repository -Dmaven.build.cache.remote.enabled=true -Dmaven.build.cache.remote.save.enabled=true -Daether.connector.http.preemptiveAuth[.local-remote-cache]=true
 ```
 
 ## Contributing
