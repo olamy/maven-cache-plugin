@@ -19,13 +19,13 @@
 package io.jenkins.plugins.maven.cache;
 
 import static hudson.Functions.checkPermission;
-import static hudson.Functions.getIconFilePath;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.model.*;
 import hudson.security.Permission;
 import hudson.security.PermissionScope;
+import io.jenkins.plugins.prism.PrismConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,8 +36,6 @@ import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import io.jenkins.plugins.prism.PrismConfiguration;
 import jenkins.model.Jenkins;
 import jenkins.model.TransientActionFactory;
 import org.apache.commons.io.IOUtils;
@@ -256,6 +254,5 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
         public PrismConfiguration getPrismConfiguration() {
             return PrismConfiguration.getInstance();
         }
-
     }
 }
