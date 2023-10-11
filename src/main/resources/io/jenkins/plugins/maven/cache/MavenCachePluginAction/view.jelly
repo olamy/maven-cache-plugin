@@ -17,9 +17,10 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:m="/io/jenkins/plugins/maven/cache/tags">
+<j:jelly xmlns:j="jelly:core" xmlns:l="/lib/layout" xmlns:m="/io/jenkins/plugins/maven/cache/tags" xmlns:p="/prism">
   <l:layout title="${%Maven Cache}">
-    <m:import/>
+    <p:prism configuration="${it.prismConfiguration}"/>
+<!--    <m:import/>-->
     <l:side-panel/>
     <l:main-panel>
       <h2>${%Maven Cache content}</h2>

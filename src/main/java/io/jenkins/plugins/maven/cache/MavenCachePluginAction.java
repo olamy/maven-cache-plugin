@@ -36,6 +36,8 @@ import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import io.jenkins.plugins.prism.PrismConfiguration;
 import jenkins.model.Jenkins;
 import jenkins.model.TransientActionFactory;
 import org.apache.commons.io.IOUtils;
@@ -250,6 +252,10 @@ public class MavenCachePluginAction implements Action, Describable<MavenCachePlu
     @Extension
     public static final class ToDeclarativeActionDescriptor extends Descriptor<MavenCachePluginAction> {
         // no op
+
+        public PrismConfiguration getPrismConfiguration() {
+            return PrismConfiguration.getInstance();
+        }
 
     }
 }
